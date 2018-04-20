@@ -16,6 +16,24 @@ objects:
           uri: "${SOURCE_REPOSITORY_URL}" 
           ref: "${SOURCE_REPOSITORY_REF}"
         contextDir: "${CONTEXT_DIR}"
+  - kind: Service
+  apiVersion: v1
+  metadata:
+    name: my-template-service
+    annotations:
+      template.openshift.io/expose-service_ip_port: "{.spec.clusterIP}:{.spec.ports[?(.name==\"web\")].port}"
+  spec:
+    ports:
+    - name: "web"
+      port: 8080
+  - kind: Route
+  apiVersion: v1
+  metadata:
+    name: my-template-route
+    annotations:
+      template.openshift.io/expose-uri: "http://{.spec.host}{.spec.path}"
+  spec:
+    path: mypath
   - kind: DeploymentConfig
     apiVersion: v1
     metadata:
